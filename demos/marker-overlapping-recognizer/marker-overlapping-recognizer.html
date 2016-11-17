@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>마커 겹침 처리</title>
+    <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?clientId=MK_1sBFRuO6XEvDi29iW"></script>
+    <script type="text/javascript" src="./js/MarkerOverlappingRecognizer.js"></script>
+    <style type="text/css">
+        html, body { width:100%;height:100%;padding:0;margin:0; }
+    </style>
+</head>
+<body>
+    <div id="map" style="width:100%;height:100%;padding:0;margin:0;"></div>
+<script>
+    var MARKER_ICON_URL = 'https://ssl.pstatic.net/static/maps/img/icons/sp_pins_spot_v3.png';
+    var MARKER_HIGHLIGHT_ICON_URL = 'https://ssl.pstatic.net/static/maps/img/icons/sp_pins_spot_v3_over.png';
+    var MARKER_SPRITE_X_OFFSET = 29;
+    var MARKER_SPRITE_Y_OFFSET = 50;
+    var MARKER_SPRITE_POSITION = {
+        "A0": [0, 0],
+        "B0": [MARKER_SPRITE_X_OFFSET, 0],
+        "C0": [MARKER_SPRITE_X_OFFSET*2, 0],
+        "D0": [MARKER_SPRITE_X_OFFSET*3, 0],
+        "E0": [MARKER_SPRITE_X_OFFSET*4, 0],
+        "F0": [MARKER_SPRITE_X_OFFSET*5, 0],
+        "G0": [MARKER_SPRITE_X_OFFSET*6, 0],
+        "H0": [MARKER_SPRITE_X_OFFSET*7, 0],
+        "I0": [MARKER_SPRITE_X_OFFSET*8, 0],
+
+        "A1": [0, MARKER_SPRITE_Y_OFFSET],
+        "B1": [MARKER_SPRITE_X_OFFSET, MARKER_SPRITE_Y_OFFSET],
+        "C1": [MARKER_SPRITE_X_OFFSET*2, MARKER_SPRITE_Y_OFFSET],
+        "D1": [MARKER_SPRITE_X_OFFSET*3, MARKER_SPRITE_Y_OFFSET],
+        "E1": [MARKER_SPRITE_X_OFFSET*4, MARKER_SPRITE_Y_OFFSET],
+        "F1": [MARKER_SPRITE_X_OFFSET*5, MARKER_SPRITE_Y_OFFSET],
+        "G1": [MARKER_SPRITE_X_OFFSET*6, MARKER_SPRITE_Y_OFFSET],
+        "H1": [MARKER_SPRITE_X_OFFSET*7, MARKER_SPRITE_Y_OFFSET],
+        "I1": [MARKER_SPRITE_X_OFFSET*8, MARKER_SPRITE_Y_OFFSET],
+
+        "A2": [0, MARKER_SPRITE_Y_OFFSET*2],
+        "B2": [MARKER_SPRITE_X_OFFSET, MARKER_SPRITE_Y_OFFSET*2],
+        "C2": [MARKER_SPRITE_X_OFFSET*2, MARKER_SPRITE_Y_OFFSET*2],
+        "D2": [MARKER_SPRITE_X_OFFSET*3, MARKER_SPRITE_Y_OFFSET*2],
+        "E2": [MARKER_SPRITE_X_OFFSET*4, MARKER_SPRITE_Y_OFFSET*2],
+        "F2": [MARKER_SPRITE_X_OFFSET*5, MARKER_SPRITE_Y_OFFSET*2],
+        "G2": [MARKER_SPRITE_X_OFFSET*6, MARKER_SPRITE_Y_OFFSET*2],
+        "H2": [MARKER_SPRITE_X_OFFSET*7, MARKER_SPRITE_Y_OFFSET*2],
+        "I2": [MARKER_SPRITE_X_OFFSET*8, MARKER_SPRITE_Y_OFFSET*2]
+    };
+
+    var map = new naver.maps.Map('map', {
+        center: new naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 10
+    });
+
+    var recognizer = new MarkerOverlappingRecognizer({
+        highlightRect: false,
+        tolerance: 5
+    });
+    recognizer.setMap(map);
+
+    var bounds = map.getBounds(),
+        southWest = bounds.getSW(),
+        northEast = bounds.getNE(),
+        lngSpan = northEast.lng() - southWest.lng(),
+        latSpan = northEast.lat() - southWest.lat();
+
+    function highlightMarker(marker) {
+        var icon = marker.getIcon();
+
+        if (icon.url !== MARKER_HIGHLIGHT_ICON_URL) {
+            icon.url = MARKER_HIGHLIGHT_ICON_URL;
+            marker.setIcon(icon);
+        }
+
+        marker.setZIndex(1000);
+    }
+
+    function unhighlightMarker(marker) {
+        var icon = marker.getIcon();
+
+        if (icon.url === MARKER_HIGHLIGHT_ICON_URL) {
+            icon.url = MARKER_ICON_URL;
+            marker.setIcon(icon);
+        }
+
+        marker.setZIndex(100);
+    }
+
+    for (var key in MARKER_SPRITE_POSITION) {
+        var position = new naver.maps.LatLng(
+            southWest.lat() + latSpan * Math.random(),
+            southWest.lng() + lngSpan * Math.random());
+
+        var marker = new naver.maps.Marker({
+            map: map,
+            position: position,
+            title: key,
+            icon: {
+                url: MARKER_ICON_URL,
+                size: new naver.maps.Size(24, 37),
+                anchor: new naver.maps.Point(12, 37),
+                origin: new naver.maps.Point(MARKER_SPRITE_POSITION[key][0], MARKER_SPRITE_POSITION[key][1])
+            },
+            shape: {
+                coords: [11, 0, 9, 0, 6, 1, 4, 2, 2, 4,
+                    0, 8, 0, 12, 1, 14, 2, 16, 5, 19,
+                    5, 20, 6, 23, 8, 26, 9, 30, 9, 34,
+                    13, 34, 13, 30, 14, 26, 16, 23, 17, 20,
+                    17, 19, 20, 16, 21, 14, 22, 12, 22, 12,
+                    22, 8, 20, 4, 18, 2, 16, 1, 13, 0],
+                type: 'poly'
+            },
+            zIndex: 100
+        });
+
+        marker.addListener('mouseover', function(e) {
+            highlightMarker(e.overlay);
+        });
+        marker.addListener('mouseout', function(e) {
+            unhighlightMarker(e.overlay);
+        });
+        marker.addListener('click', function(e) {
+            var m = e.overlay;
+
+            alert(m.title);
+        });
+
+        recognizer.add(marker);
+
+        window.MARKER = marker;
+    };
+
+    var overlapCoverMarker = null;
+
+    naver.maps.Event.addListener(recognizer, 'overlap', function(list) {
+        if (overlapCoverMarker) {
+            unhighlightMarker(overlapCoverMarker);
+        }
+
+        overlapCoverMarker = list[0].marker;
+
+        naver.maps.Event.once(overlapCoverMarker, 'mouseout', function() {
+            highlightMarker(overlapCoverMarker);
+        });
+    });
+
+    naver.maps.Event.addListener(recognizer, 'clickItem', function(e) {
+        recognizer.hide();
+
+        if (overlapCoverMarker) {
+            unhighlightMarker(overlapCoverMarker);
+
+            overlapCoverMarker = null;
+        }
+    });
+
+    map.setZoom(7);
+</script>
+</body>
+</html>
