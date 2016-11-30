@@ -1,6 +1,6 @@
 /**
  * Copyright 2016 NAVER Corp.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -97,9 +97,9 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 			if (newOptions.map && !isFirst) {
 				_this.setMap(newOptions.map);
 			}
-		}	
+		}
 	},
-	
+
 	/**
 	 * 마커 클러스터링 옵션을 반환합니다. 특정 옵션 이름을 지정하지 않으면, 모든 옵션을 반환합니다.
 	 * @param {string} key 반환받을 옵션 이름
@@ -117,7 +117,7 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 			});
 
 			return options;
-		}	
+		}
 	},
 
 	/**
@@ -443,7 +443,7 @@ Cluster.prototype = {
 	 */
 	destroy: function() {
 		naver.maps.Event.removeListener(this._relation);
-		
+
 		var members = this._clusterMember;
 
 		for (var i = 0, ii = members.length; i < ii; i++) {
@@ -451,7 +451,7 @@ Cluster.prototype = {
 		}
 
 		this._clusterMarker.setMap(null);
-		
+
 		this._clusterMarker = null;
 		this._clusterCenter = null;
 		this._clusterBounds = null;
@@ -525,7 +525,8 @@ Cluster.prototype = {
 	updateCluster: function() {
 		if (!this._clusterMarker) {
 			this._clusterMarker = new naver.maps.Marker({
-				position: this._clusterCenter
+				position: this._clusterCenter,
+				map: this._markerClusterer.getMap()
 			});
 
 			if (!this._markerClusterer.getDisableClickZoom()) {
@@ -613,7 +614,7 @@ Cluster.prototype = {
 			members[i].setMap(null);
 		}
 
-		if (marker) {
+		if (marker && !marker.getMap()) {
 			marker.setMap(map);
 		}
 	},
