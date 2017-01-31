@@ -58,7 +58,7 @@ NAVER Maps JavaScript API v3를 이용해 마커 클러스터링를 구현한 �
 	            anchor: N.Point(20, 20)
 	        };
 
-	    var clusterMarkerer = new MarkerClusterer({
+	    var markerClustering = new MarkerClustering({
 	        minClusterSize: 2,
 	        maxZoom: 8,
 	        map: map,
