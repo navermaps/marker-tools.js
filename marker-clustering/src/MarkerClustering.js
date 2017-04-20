@@ -250,6 +250,22 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 		this.setOptions('disableClickZoom', flag);
 	},
 
+	/**
+	 * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 반환합니다.
+	 * @return {boolean} 평균 좌표로 클러스터링 여부
+	 */
+	getAverageCenter: function() {
+		return this.getOptions('averageCenter');
+	},
+
+	/**
+	 * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 설정합니다.
+	 * @param {boolean} averageCenter 평균 좌표로 클러스터링 여부
+	 */
+	setAverageCenter: function(averageCenter) {
+		this.setOptions('averageCenter', averageCenter);
+	},
+
 	// KVO 이벤트 핸들러
 	changed: function(key, value) {
 		if (!this.getMap()) return;
@@ -258,6 +274,7 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 			case 'marker':
 			case 'minClusterSize':
 			case 'gridSize':
+			case 'averageCenter':
 				this._redraw();
 				break;
 			case 'indexGenerator':
@@ -528,8 +545,8 @@ Cluster.prototype = {
 		if (!this._clusterMarker) {
 			var position;
 
-			if (this._markerClusterer.getOptions().averageCenter) {
-				position = this._getAverageCenter(this._clusterMember);
+			if (this._markerClusterer.getAverageCenter()) {
+				position = this._calcAverageCenter(this._clusterMember);
 			} else {
 				position = this._clusterCenter;
 			}
@@ -697,11 +714,11 @@ Cluster.prototype = {
 
 	/**
 	 * 전달된 마커들의 중심 좌표를 반환합니다.
-	 * @param {Array <naver.maps.Marker>} markers 마커 배열
+	 * @param {Array.<naver.maps.Marker>} markers 마커 배열
 	 * @return {naver.maps.LatLng} 마커들의 중심 좌표
 	 * @private
 	 */
-	_getAverageCenter: function(markers) {
+	_calcAverageCenter: function(markers) {
 		var numberOfMarkers = markers.length;
 		var averageCenter = [0, 0];
 		
@@ -715,4 +732,6 @@ Cluster.prototype = {
 
 		return new naver.maps.LatLng(averageCenter[1], averageCenter[0]);
 	}
+
+
 };
