@@ -270,7 +270,7 @@ MarkerOverlappingRecognizer.prototype = {
                 item = $(itemTemplate.replace(/\{\{(\w+)\}\}/g, function(match, symbol) {
                     if (symbol === 'order') {
                         return i+1;
-                    } else if (symbol in marker) {
+                    } else if (symbol in c.marker) {
                         return c.marker[symbol];
                     } else if (c.marker.get(symbol)) {
                         return c.marker.get(symbol);
