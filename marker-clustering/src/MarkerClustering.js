@@ -482,7 +482,15 @@ Cluster.prototype = {
 	 */
 	getCount: function() {
 		return this._clusterMember.length;
-	},
+  },
+  
+  /**
+	 * 현재의 클러스터 멤버 마커 객체를 반환합니다.
+	 * @return {naver.maps.Marker[]} 클러스터를 구성하는 마커 객체 집합
+	 */
+  getClusterMember: function() {
+    return this._clusterMember;
+  },
 
 	/**
 	 * 전달된 위/경도가 클러스터 경계 영역 내에 있는지 여부를 반환합니다.
@@ -491,7 +499,7 @@ Cluster.prototype = {
 	 */
 	isInBounds: function(latlng) {
 		return this._clusterBounds && this._clusterBounds.hasLatLng(latlng);
-	},
+  },
 
 	/**
 	 * 클러스터 마커 클릭 시 줌 동작을 수행하도록 합니다.
@@ -501,9 +509,9 @@ Cluster.prototype = {
 
 		var map = this._markerClusterer.getMap();
 
-		this._relation = naver.maps.Event.addListener(this._clusterMarker, 'click', function(e) {
+		this._relation = naver.maps.Event.addListener(this._clusterMarker, 'click', naver.maps.Util.bind(function(e) {
 			map.morph(e.coord, map.getZoom() + 1);
-		});
+		}, this));
 	},
 
 	/**
