@@ -738,7 +738,7 @@ Cluster.prototype = {
 		averageCenter[0] /= numberOfMarkers;
 		averageCenter[1] /= numberOfMarkers;
 
-		return new naver.maps.Point(averageCenter[1], averageCenter[0]);
+		return new naver.maps.Point(averageCenter[0], averageCenter[1]);
 	}
 
 
