@@ -723,7 +723,7 @@ Cluster.prototype = {
 	/**
 	 * 전달된 마커들의 중심 좌표를 반환합니다.
 	 * @param {Array.<naver.maps.Marker>} markers 마커 배열
-	 * @return {naver.maps.LatLng} 마커들의 중심 좌표
+	 * @return {naver.maps.Point} 마커들의 중심 좌표
 	 * @private
 	 */
 	_calcAverageCenter: function(markers) {
@@ -738,7 +738,7 @@ Cluster.prototype = {
 		averageCenter[0] /= numberOfMarkers;
 		averageCenter[1] /= numberOfMarkers;
 
-		return new naver.maps.LatLng(averageCenter[1], averageCenter[0]);
+		return new naver.maps.Point(averageCenter[1], averageCenter[0]);
 	}
 
 
