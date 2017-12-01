@@ -37,6 +37,8 @@ var MarkerClustering = function(options) {
 		icons: [],
 		// 클러스터 마커의 아이콘 배열에서 어떤 아이콘을 선택할 것인지 인덱스를 결정합니다.
 		indexGenerator: [10, 100, 200, 500, 1000],
+		// 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부입니다.
+		averageCenter: false,
 		// 클러스터 마커를 갱신할 때 호출하는 콜백함수입니다. 이 함수를 통해 클러스터 마커에 개수를 표현하는 등의 엘리먼트를 조작할 수 있습니다.
 		stylingFunction: function() {}
 	};
@@ -248,6 +250,22 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 		this.setOptions('disableClickZoom', flag);
 	},
 
+	/**
+	 * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 반환합니다.
+	 * @return {boolean} 평균 좌표로 클러스터링 여부
+	 */
+	getAverageCenter: function() {
+		return this.getOptions('averageCenter');
+	},
+
+	/**
+	 * 클러스터 마커의 위치를 클러스터를 구성하고 있는 마커의 평균 좌표로 할 것인지 여부를 설정합니다.
+	 * @param {boolean} averageCenter 평균 좌표로 클러스터링 여부
+	 */
+	setAverageCenter: function(averageCenter) {
+		this.setOptions('averageCenter', averageCenter);
+	},
+
 	// KVO 이벤트 핸들러
 	changed: function(key, value) {
 		if (!this.getMap()) return;
@@ -256,6 +274,7 @@ naver.maps.Util.ClassExtend(MarkerClustering, naver.maps.OverlayView, {
 			case 'marker':
 			case 'minClusterSize':
 			case 'gridSize':
+			case 'averageCenter':
 				this._redraw();
 				break;
 			case 'indexGenerator':
@@ -532,8 +551,16 @@ Cluster.prototype = {
 	 */
 	updateCluster: function() {
 		if (!this._clusterMarker) {
+			var position;
+
+			if (this._markerClusterer.getAverageCenter()) {
+				position = this._calcAverageCenter(this._clusterMember);
+			} else {
+				position = this._clusterCenter;
+			}
+
 			this._clusterMarker = new naver.maps.Marker({
-				position: this._clusterCenter,
+				position: position,
 				map: this._markerClusterer.getMap()
 			});
 
@@ -691,5 +718,28 @@ Cluster.prototype = {
 	 */
 	_isMember: function(marker) {
 		return this._clusterMember.indexOf(marker) !== -1;
+	},
+
+	/**
+	 * 전달된 마커들의 중심 좌표를 반환합니다.
+	 * @param {Array.<naver.maps.Marker>} markers 마커 배열
+	 * @return {naver.maps.Point} 마커들의 중심 좌표
+	 * @private
+	 */
+	_calcAverageCenter: function(markers) {
+		var numberOfMarkers = markers.length;
+		var averageCenter = [0, 0];
+		
+		for (var i = 0; i < numberOfMarkers; i++) {
+			averageCenter[0] += markers[i].position.x;
+			averageCenter[1] += markers[i].position.y;
+		}
+
+		averageCenter[0] /= numberOfMarkers;
+		averageCenter[1] /= numberOfMarkers;
+
+		return new naver.maps.Point(averageCenter[0], averageCenter[1]);
 	}
+
+
 };
