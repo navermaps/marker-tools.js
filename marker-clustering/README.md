@@ -26,7 +26,7 @@ NAVER Maps JavaScript API v3를 이용해 마커 클러스터링를 구현한 �
 	<div id="map" style="width:100%;height:100%;padding:0;margin:0;"></div>
 	<script>
 		var map = new naver.maps.Map("map", {
-	        zoom: 3,
+	        zoom: 6,
 	        center: new naver.maps.LatLng(36.2253017, 127.6460516)
 	    });
 
@@ -60,7 +60,7 @@ NAVER Maps JavaScript API v3를 이용해 마커 클러스터링를 구현한 �
 
 	    var markerClustering = new MarkerClustering({
 	        minClusterSize: 2,
-	        maxZoom: 8,
+	        maxZoom: 13,
 	        map: map,
 	        markers: markers,
 	        disableClickZoom: false,

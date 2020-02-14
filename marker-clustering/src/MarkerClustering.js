@@ -30,7 +30,7 @@ var MarkerClustering = function(options) {
 		// 클러스터를 구성할 최소 마커 수입니다.
 		minClusterSize: 2,
 		// 클러스터 마커로 표현할 최대 줌 레벨입니다. 해당 줌 레벨보다 높으면, 클러스터를 구성하고 있는 마커를 노출합니다.
-		maxZoom: 8,
+		maxZoom: 13,
 		// 클러스터를 구성할 그리드 크기입니다. 단위는 픽셀입니다.
 		gridSize: 100,
 		// 클러스터 마커의 아이콘입니다. NAVER Maps JavaScript API v3에서 제공하는 아이콘, 심볼, HTML 마커 유형을 모두 사용할 수 있습니다.
@@ -502,7 +502,7 @@ Cluster.prototype = {
 	getCount: function() {
 		return this._clusterMember.length;
   },
-  
+
   /**
 	 * 현재의 클러스터 멤버 마커 객체를 반환합니다.
 	 * @return {naver.maps.Marker[]} 클러스터를 구성하는 마커 객체 집합
@@ -729,7 +729,7 @@ Cluster.prototype = {
 	_calcAverageCenter: function(markers) {
 		var numberOfMarkers = markers.length;
 		var averageCenter = [0, 0];
-		
+
 		for (var i = 0; i < numberOfMarkers; i++) {
 			averageCenter[0] += markers[i].position.x;
 			averageCenter[1] += markers[i].position.y;
